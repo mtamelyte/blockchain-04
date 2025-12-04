@@ -7,7 +7,7 @@ contract RentalAgreement{
 
    uint public rentCost;
    uint public securityDeposit;
-   uint public managementFee;
+   uint public managementFeePercent;
    
    uint public lastPayment;
    uint public depositHeld;
@@ -23,11 +23,15 @@ contract RentalAgreement{
 
    Payment[] public paidRent;
 
+   mapping(address => uint) public balance; 
+
+   event RentPaid(address tenant, uint amount, uint timestamp);
+
    constructor (address _tenant,
    address _propertyManager,
    uint _rentCost,
    uint _securityDeposit,
-   uint _managementFee, 
+   uint _managementFeePercent, 
    uint _start, 
    uint _end
    ) payable {
@@ -36,9 +40,29 @@ contract RentalAgreement{
       propertyManager = _propertyManager;
       rentCost = _rentCost;
       securityDeposit = _securityDeposit;
-      managementFee = _managementFee;
+      managementFeePercent = _managementFeePercent;
       start = _start;
       end = _end;
    }
 
+   function payRent () external payable {
+      require(msg.sender == tenant, "Only tenant is allowed.");
+      require(msg.value == rentCost, "Wrong amount.");
+      require(block.timestamp <= end, "Lease has ended.");
+
+      uint managementFee = (msg.value * managementFeePercent) /100;
+      uint landlordFee = msg.value - managementFee;
+
+      balance[landlord] += landlordFee;
+      balance[propertyManager] += managementFee;
+
+      paidRent.push(Payment({
+         id : paidRent.length + 1,
+         value : msg.value
+      }));
+
+      lastPayment = block.timestamp;
+
+      emit RentPaid(msg.sender, msg.value, block.timestamp)
+   }
 }
