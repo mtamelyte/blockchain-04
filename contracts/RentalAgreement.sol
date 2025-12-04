@@ -33,8 +33,9 @@ contract RentalAgreement{
 
    mapping(address => uint) public balance; 
 
-   event RentPaid(address tenant, uint amount, uint timestamp);
+   event RentPaid(uint timestamp);
    event ContractSigned(uint timestamp);
+   event ContractTerminated(uint timestamp);
 
    constructor (
       address _landlord,
@@ -108,6 +109,15 @@ contract RentalAgreement{
 
       lastPayment = block.timestamp;
 
-      emit RentPaid(msg.sender, msg.value, block.timestamp);
+      emit RentPaid(block.timestamp);
+   }
+
+   function terminateContract() external {
+      require(msg.sender == landlord || 
+      msg.sender == tenant || 
+      msg.sender == propertyManager, 
+      "Not a party in this contract");
+      active = false;
+      emit ContractTerminated(block.timestamp);
    }
 }
