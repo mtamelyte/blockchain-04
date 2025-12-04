@@ -23,5 +23,22 @@ contract RentalAgreement{
 
    Payment[] public paidRent;
 
+   constructor (address _tenant,
+   address _propertyManager,
+   uint _rentCost,
+   uint _securityDeposit,
+   uint _managementFee, 
+   uint _start, 
+   uint _end
+   ) payable {
+      landlord = msg.sender;
+      tenant = _tenant;
+      propertyManager = _propertyManager;
+      rentCost = _rentCost;
+      securityDeposit = _securityDeposit;
+      managementFee = _managementFee;
+      start = _start;
+      end = _end;
+   }
 
 }
