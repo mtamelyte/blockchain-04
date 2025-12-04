@@ -1,4 +1,4 @@
-var Hello = artifacts.require("Rent.sol");
+var RentalAgreement = artifacts.require("RentalAgreement.sol");
 module.exports = function (deployer) {
-  deployer.deploy(Rent);
+  deployer.deploy(RentalAgreement);
 };

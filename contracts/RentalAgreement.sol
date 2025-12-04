@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract RentalAgreement{
@@ -13,6 +14,7 @@ contract RentalAgreement{
    uint public rentCost;
    uint public securityDeposit;
    uint public managementFeePercent;
+   string public houseAddress;
    
    uint public lastPayment;
    uint public depositHeld;
@@ -38,6 +40,7 @@ contract RentalAgreement{
       address _landlord,
       address _tenant,
       address _propertyManager,
+      string memory _houseAddress,
       uint _rentCost,
       uint _securityDeposit,
       uint _managementFeePercent, 
@@ -47,6 +50,7 @@ contract RentalAgreement{
       landlord = _landlord;
       tenant = _tenant;
       propertyManager = _propertyManager;
+      houseAddress = _houseAddress;
       rentCost = _rentCost;
       securityDeposit = _securityDeposit;
       managementFeePercent = _managementFeePercent;
