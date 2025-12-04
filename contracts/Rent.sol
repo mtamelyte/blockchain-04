@@ -19,6 +19,7 @@ contract RentalAgreement{
    struct Payment{
       uint id;
       uint value;
+      uint timestamp;
    }
 
    Payment[] public paidRent;
@@ -58,11 +59,12 @@ contract RentalAgreement{
 
       paidRent.push(Payment({
          id : paidRent.length + 1,
-         value : msg.value
+         value : msg.value,
+         timestamp : block.timestamp
       }));
 
       lastPayment = block.timestamp;
 
-      emit RentPaid(msg.sender, msg.value, block.timestamp)
+      emit RentPaid(msg.sender, msg.value, block.timestamp);
    }
 }
