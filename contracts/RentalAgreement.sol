@@ -36,6 +36,8 @@ contract RentalAgreement{
    event RentPaid(uint timestamp);
    event ContractSigned(uint timestamp);
    event ContractTerminated(uint timestamp);
+   event DamagesClaimed(uint amount);
+   event DepositReturned(uint amount);
 
    constructor (
       address _landlord,
@@ -119,5 +121,24 @@ contract RentalAgreement{
       "Not a party in this contract");
       active = false;
       emit ContractTerminated(block.timestamp);
+   }
+
+   function claimDamages(uint amount) external {
+      require(amount <= depositHeld, "Not enough money in deposit.");
+      depositHeld -= amount;
+      balance[landlord] += amount;
+
+      emit DamagesClaimed(amount);
+   }
+
+   function returnDeposit() external {
+      require(depositHeld > 0, "No deposit left");
+
+      uint amountToReturn = depositHeld;
+      depositHeld = 0;
+      (bool returned, ) = payable(tenant).call{value: amountToReturn}("");
+      require(returned, "Transfer failed");
+      
+      emit DepositReturned(amountToReturn);
    }
 }
