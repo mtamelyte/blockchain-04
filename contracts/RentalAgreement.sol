@@ -6,7 +6,6 @@ contract RentalAgreement{
    address public tenant;
    address public propertyManager;
 
-   bool public landlordAgreed;
    bool public tenantAgreed;
    bool public propertyManagerAgreed;
    bool public depositPaid;
@@ -36,11 +35,12 @@ contract RentalAgreement{
    event RentPaid(uint timestamp);
    event ContractSigned(uint timestamp);
    event ContractTerminated(uint timestamp);
-   event DamagesClaimed(uint amount);
-   event DepositReturned(uint amount);
+   event AgreedToTerms(address party, uint timestamp);
+   event DepositPaid(uint timestamp);
+   event DamagesClaimed(uint amount, uint timestamp);
+   event DepositReturned(uint amount, uint timestamp);
 
    constructor (
-      address _landlord,
       address _tenant,
       address _propertyManager,
       string memory _houseAddress,
@@ -50,7 +50,7 @@ contract RentalAgreement{
       uint _start, 
       uint _end
    ) {
-      landlord = _landlord;
+      landlord = msg.sender;
       tenant = _tenant;
       propertyManager = _propertyManager;
       houseAddress = _houseAddress;
@@ -63,10 +63,11 @@ contract RentalAgreement{
    }
 
    function agreeToTerms() external {
-      if(msg.sender == landlord) landlordAgreed = true;
-      else if (msg.sender == tenant) tenantAgreed = true;
+      if(msg.sender == tenant) tenantAgreed = true;
       else if(msg.sender == propertyManager) propertyManagerAgreed = true;
       else revert("Not a party in this contract");
+
+      emit AgreedToTerms(msg.sender, block.timestamp);
 
       signContract();
    }
@@ -79,12 +80,13 @@ contract RentalAgreement{
       depositHeld = msg.value;
       depositPaid = true;
 
+      emit DepositPaid(block.timestamp);
+
       signContract();
    }
 
    function signContract() internal {
       require(tenantAgreed, "Tenant hasn't agreed to terms");
-      require(landlordAgreed, "Landlord hasn't agreed to terms");
       require(propertyManagerAgreed, "Property manager hasn't agreed to terms");
       require(depositPaid, "Security deposit hasn't been paid");
 
@@ -128,10 +130,11 @@ contract RentalAgreement{
       depositHeld -= amount;
       balance[landlord] += amount;
 
-      emit DamagesClaimed(amount);
+      emit DamagesClaimed(amount, block.timestamp);
    }
 
    function returnDeposit() external {
+      require(msg.sender == landlord, "Only landlord allowed.");
       require(depositHeld > 0, "No deposit left");
 
       uint amountToReturn = depositHeld;
@@ -139,6 +142,6 @@ contract RentalAgreement{
       (bool returned, ) = payable(tenant).call{value: amountToReturn}("");
       require(returned, "Transfer failed");
       
-      emit DepositReturned(amountToReturn);
+      emit DepositReturned(amountToReturn, block.timestamp);
    }
 }
