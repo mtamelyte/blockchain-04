@@ -15,7 +15,6 @@ contract RentalAgreement{
    uint public managementFeePercent;
    string public houseAddress;
    
-   uint public lastPayment;
    uint public depositHeld;
    bool public active;
 
@@ -41,8 +40,6 @@ contract RentalAgreement{
    event DepositReturned(uint amount, uint timestamp);
 
    constructor (
-      address _tenant,
-      address _propertyManager,
       string memory _houseAddress,
       uint _rentCost,
       uint _securityDeposit,
@@ -51,8 +48,6 @@ contract RentalAgreement{
       uint _end
    ) {
       landlord = msg.sender;
-      tenant = _tenant;
-      propertyManager = _propertyManager;
       houseAddress = _houseAddress;
       rentCost = _rentCost;
       securityDeposit = _securityDeposit;
@@ -62,14 +57,19 @@ contract RentalAgreement{
       active = false;
    }
 
-   function agreeToTerms() external {
-      if(msg.sender == tenant) tenantAgreed = true;
-      else if(msg.sender == propertyManager) propertyManagerAgreed = true;
-      else revert("Not a party in this contract");
+   function signAsTenant() external {
+      require(msg.sender!=landlord, "Landlord can't be his own tenant");
+      require(msg.sender!=propertyManager, "Cannot be a tenant on a property that you manage");
+      tenant = msg.sender;
 
-      emit AgreedToTerms(msg.sender, block.timestamp);
+      emit AgreedToTerms(tenant, block.timestamp);
+   }
 
-      signContract();
+   function signAsPropertyManager() external {
+      require(msg.sender!=tenant, "Tenant can't manage the property they are renting");
+      propertyManager = msg.sender;
+
+      emit AgreedToTerms(propertyManager, block.timestamp);
    }
 
    function payDeposit() external payable{
@@ -96,6 +96,7 @@ contract RentalAgreement{
 
    function payRent () external payable {
       require(msg.sender == tenant, "Only tenant is allowed.");
+      require(active, "Lease has not been signed.");
       require(msg.value == rentCost, "Wrong amount.");
       require(block.timestamp <= end, "Lease has ended.");
 
@@ -110,8 +111,6 @@ contract RentalAgreement{
          value : msg.value,
          timestamp : block.timestamp
       }));
-
-      lastPayment = block.timestamp;
 
       emit RentPaid(block.timestamp);
    }
@@ -143,5 +142,9 @@ contract RentalAgreement{
       require(returned, "Transfer failed");
       
       emit DepositReturned(amountToReturn, block.timestamp);
+   }
+
+   function getPayment(uint paymentIndex) public view returns(Payment memory) {
+      return paidRent[paymentIndex];
    }
 }
