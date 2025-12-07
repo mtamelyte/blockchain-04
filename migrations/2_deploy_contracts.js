@@ -1,12 +1,10 @@
 var RentalAgreement = artifacts.require("RentalAgreement.sol");
-module.exports = function (deployer, accounts, address) {
+module.exports = function (deployer, address) {
   deployer.deploy(
     RentalAgreement,
-    accounts[0],
-    accounts[1],
     address,
-    ethers.utils.parseEther("1.5"),
-    ethers.utils.parseEther("3.0"),
+    web3.utils.toWei("1.5", "ether"),
+    web3.utils.toWei("3.0", "ether"),
     10,
     Math.floor(Date.now() / 1000),
     Math.floor(Date.now() / 1000) + 365 * 24 * 60 * 60

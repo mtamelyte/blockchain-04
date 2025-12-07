@@ -61,6 +61,7 @@ contract RentalAgreement{
       require(msg.sender!=landlord, "Landlord can't be his own tenant");
       require(msg.sender!=propertyManager, "Cannot be a tenant on a property that you manage");
       tenant = msg.sender;
+      signContract();
 
       emit AgreedToTerms(tenant, block.timestamp);
    }
@@ -68,6 +69,7 @@ contract RentalAgreement{
    function signAsPropertyManager() external {
       require(msg.sender!=tenant, "Tenant can't manage the property they are renting");
       propertyManager = msg.sender;
+      signContract();
 
       emit AgreedToTerms(propertyManager, block.timestamp);
    }
@@ -121,6 +123,7 @@ contract RentalAgreement{
       msg.sender == propertyManager, 
       "Not a party in this contract");
       active = false;
+
       emit ContractTerminated(block.timestamp);
    }
 
