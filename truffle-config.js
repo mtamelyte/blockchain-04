@@ -1,18 +1,34 @@
+const HDWalletProvider = require("@truffle/hdwallet-provider");
+
+require("dotenv").config();
+const mnemonic = process.env.MNEMONIC;
+const infuraKey = process.env.INFURA_KEY;
+
 module.exports = {
-  // Configure your networks
   networks: {
-    // development network is default for truffle
     development: {
-      host: "127.0.0.1", // Localhost (default: none)
-      port: 8545, // Standard Ethereum port (default: none)
-      network_id: "*", // Any network (default: none)
+      host: "127.0.0.1",
+      port: 7545,
+      network_id: "*",
+    },
+
+    sepolia: {
+      provider: () =>
+        new HDWalletProvider(
+          mnemonic,
+          `https://sepolia.infura.io/v3/${infuraKey}`
+        ),
+      network_id: 11155111,
+      gas: 5500000,
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true,
     },
   },
 
-  // Configure your compilers
   compilers: {
     solc: {
-      version: "0.8.0", // Fetch exact version from solc-bin (default: truffle's version)
+      version: "0.8.0",
     },
   },
 };

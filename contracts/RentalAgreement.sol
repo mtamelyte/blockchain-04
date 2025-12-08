@@ -61,6 +61,7 @@ contract RentalAgreement{
       require(msg.sender!=landlord, "Landlord can't be his own tenant");
       require(msg.sender!=propertyManager, "Cannot be a tenant on a property that you manage");
       tenant = msg.sender;
+      tenantAgreed = true;
       signContract();
 
       emit AgreedToTerms(tenant, block.timestamp);
@@ -69,6 +70,7 @@ contract RentalAgreement{
    function signAsPropertyManager() external {
       require(msg.sender!=tenant, "Tenant can't manage the property they are renting");
       propertyManager = msg.sender;
+      propertyManagerAgreed = true;
       signContract();
 
       emit AgreedToTerms(propertyManager, block.timestamp);
@@ -88,12 +90,9 @@ contract RentalAgreement{
    }
 
    function signContract() internal {
-      require(tenantAgreed, "Tenant hasn't agreed to terms");
-      require(propertyManagerAgreed, "Property manager hasn't agreed to terms");
-      require(depositPaid, "Security deposit hasn't been paid");
-
+      if(tenantAgreed && propertyManagerAgreed && depositPaid){
       active = true;
-      emit ContractSigned(block.timestamp);
+      emit ContractSigned(block.timestamp);}
    }
 
    function payRent () external payable {
