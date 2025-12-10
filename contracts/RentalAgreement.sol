@@ -13,7 +13,6 @@ contract RentalAgreement{
    uint public rentCost;
    uint public securityDeposit;
    uint public managementFeePercent;
-   string public houseAddress;
    
    uint public depositHeld;
    bool public active;
@@ -38,9 +37,9 @@ contract RentalAgreement{
    event DepositPaid(uint timestamp);
    event DamagesClaimed(uint amount, uint timestamp);
    event DepositReturned(uint amount, uint timestamp);
+   event TermsChanged(uint timestamp);
 
    constructor (
-      string memory _houseAddress,
       uint _rentCost,
       uint _securityDeposit,
       uint _managementFeePercent, 
@@ -48,7 +47,6 @@ contract RentalAgreement{
       uint _end
    ) {
       landlord = msg.sender;
-      houseAddress = _houseAddress;
       rentCost = _rentCost;
       securityDeposit = _securityDeposit;
       managementFeePercent = _managementFeePercent;
@@ -122,8 +120,59 @@ contract RentalAgreement{
       msg.sender == propertyManager, 
       "Not a party in this contract");
       active = false;
+      returnDeposit();
 
       emit ContractTerminated(block.timestamp);
+   }
+
+   function changeRentCost(uint cost) external {
+      require(active==false, "Can't change the terms of an active contract.");
+      require(msg.sender == landlord, "Landlord only.");
+      rentCost = cost;
+      tenantAgreed = false;
+      propertyManagerAgreed = false;
+
+      emit TermsChanged(block.timestamp);
+   }
+
+   function changeDepositValue(uint cost) external {
+      require(active==false, "Can't change the terms of an active contract.");
+      require(msg.sender == landlord, "Landlord only.");
+      securityDeposit = cost;
+      tenantAgreed = false;
+      propertyManagerAgreed = false;
+
+      emit TermsChanged(block.timestamp);
+   }
+
+   function changeManagementFee(uint percentage) external {
+      require(active==false, "Can't change the terms of an active contract.");
+      require(msg.sender == landlord, "Landlord only.");
+      managementFeePercent = percentage;
+      tenantAgreed = false;
+      propertyManagerAgreed = false;
+
+      emit TermsChanged(block.timestamp);
+   }
+
+      function changeStartDate(uint date) external {
+      require(active==false, "Can't change the terms of an active contract.");
+      require(msg.sender == landlord, "Landlord only.");
+      start = date;
+      tenantAgreed = false;
+      propertyManagerAgreed = false;
+
+      emit TermsChanged(block.timestamp);
+   }
+
+   function changeEndDate(uint date) external {
+      require(active==false, "Can't change the terms of an active contract.");
+      require(msg.sender == landlord, "Landlord only.");
+      end = date;
+      tenantAgreed = false;
+      propertyManagerAgreed = false;
+
+      emit TermsChanged(block.timestamp);
    }
 
    function claimDamages(uint amount) external {
@@ -134,7 +183,7 @@ contract RentalAgreement{
       emit DamagesClaimed(amount, block.timestamp);
    }
 
-   function returnDeposit() external {
+   function returnDeposit() public {
       require(msg.sender == landlord, "Only landlord allowed.");
       require(depositHeld > 0, "No deposit left");
 
@@ -144,6 +193,15 @@ contract RentalAgreement{
       require(returned, "Transfer failed");
       
       emit DepositReturned(amountToReturn, block.timestamp);
+   }
+
+   function withdraw() external {
+      uint amount = balance[msg.sender];
+      require(amount > 0, "No balance to withdraw");
+   
+      balance[msg.sender] = 0;
+      (bool sent, ) = payable(msg.sender).call{value: amount}("");
+      require(sent, "Transfer failed");
    }
 
    function getPayment(uint paymentIndex) public view returns(Payment memory) {

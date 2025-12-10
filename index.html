@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rental Smart Contract</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Rental Smart Contract</h1>
+        <p>Decentralized Rental Agreement Management</p>
+      </div>
+
+      <div class="card config-section">
+        <h3>Configuration (Required)</h3>
+        <div class="input-group">
+          <label>Contract Address:</label>
+          <input type="text" id="contractAddress" placeholder="0x..." />
+        </div>
+        <div class="input-group">
+          <label
+            >Contract ABI (paste from
+            build/contracts/RentalAgreement.json):</label
+          >
+          <input type="text" id="contractAbi" placeholder='[{"inputs":...}]' />
+        </div>
+        <button class="btn" onclick="saveConfig()">Save Configuration</button>
+      </div>
+
+      <div class="card connect-section">
+        <h2>Connect Wallet</h2>
+        <button class="btn" id="connectBtn" onclick="connectWallet()">
+          Connect MetaMask
+        </button>
+        <div
+          id="accountDisplay"
+          class="account-display"
+          style="display: none"
+        ></div>
+      </div>
+
+      <div class="card" id="statusCard" style="display: none">
+        <h2>Contract Status</h2>
+        <div class="status-grid" id="contractStatus">
+          <div class="loading">
+            <div class="spinner"></div>
+            <p>Loading contract data...</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="balanceCard" style="display: none">
+        <h2>Your Balance in Contract</h2>
+        <div class="balance-card">
+          <div>Available to Withdraw</div>
+          <div class="balance-amount" id="balance">0 ETH</div>
+          <button class="btn" onclick="withdraw()">Withdraw Balance</button>
+        </div>
+      </div>
+
+      <div class="card" id="actionsCard" style="display: none">
+        <h2>Actions</h2>
+        <div class="actions-grid">
+          <button class="btn" onclick="signAsTenant()">Sign as Tenant</button>
+          <button class="btn" onclick="signAsManager()">
+            Sign as Property Manager
+          </button>
+          <button class="btn btn-success" onclick="payDeposit()">
+            Pay Security Deposit
+          </button>
+          <button class="btn btn-secondary" onclick="payRent()">
+            Pay Rent
+          </button>
+          <button class="btn" onclick="claimDamages()">
+            Claim Damages (Landlord)
+          </button>
+          <button class="btn" onclick="returnDeposit()">
+            Return Deposit (Landlord)
+          </button>
+          <button class="btn" onclick="terminateContract()">
+            Terminate Contract
+          </button>
+        </div>
+      </div>
+
+      <div class="card" id="historyCard" style="display: none">
+        <h2>Payment History</h2>
+        <div id="paymentHistory">
+          <p class="loading">No payments yet</p>
+        </div>
+      </div>
+
+      <div id="message" class="message"></div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

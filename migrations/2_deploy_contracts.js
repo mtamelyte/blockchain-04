@@ -1,8 +1,7 @@
 var RentalAgreement = artifacts.require("RentalAgreement.sol");
-module.exports = function (deployer, address) {
+module.exports = function (deployer) {
   deployer.deploy(
     RentalAgreement,
-    address,
     web3.utils.toWei("1.5", "ether"),
     web3.utils.toWei("3.0", "ether"),
     10,
