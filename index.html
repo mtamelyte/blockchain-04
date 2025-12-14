@@ -10,92 +10,1368 @@
   <body>
     <div class="container">
       <div class="header">
-        <h1>Rental Smart Contract</h1>
+        <h1>🏠 Rental Smart Contract</h1>
         <p>Decentralized Rental Agreement Management</p>
       </div>
 
-      <div class="card config-section">
-        <h3>Configuration (Required)</h3>
-        <div class="input-group">
-          <label>Contract Address:</label>
-          <input type="text" id="contractAddress" placeholder="0x..." />
-        </div>
-        <div class="input-group">
-          <label
-            >Contract ABI (paste from
-            build/contracts/RentalAgreement.json):</label
-          >
-          <input type="text" id="contractAbi" placeholder='[{"inputs":...}]' />
-        </div>
-        <button class="btn" onclick="saveConfig()">Save Configuration</button>
-      </div>
-
-      <div class="card connect-section">
-        <h2>Connect Wallet</h2>
-        <button class="btn" id="connectBtn" onclick="connectWallet()">
-          Connect MetaMask
+      <div class="nav-tabs">
+        <button class="nav-tab active" onclick="showPage('main')">
+          🏠 Dashboard
         </button>
-        <div
-          id="accountDisplay"
-          class="account-display"
-          style="display: none"
-        ></div>
+        <button class="nav-tab" onclick="showPage('settings')">
+          <span class="settings-icon">⚙️</span> Settings
+        </button>
       </div>
 
-      <div class="card" id="statusCard" style="display: none">
-        <h2>Contract Status</h2>
-        <div class="status-grid" id="contractStatus">
-          <div class="loading">
-            <div class="spinner"></div>
-            <p>Loading contract data...</p>
+      <div id="mainPage" class="page active">
+        <div class="card connect-section">
+          <h2>Connect Wallet</h2>
+          <button class="btn" id="connectBtn" onclick="connectWallet()">
+            Connect MetaMask
+          </button>
+          <div
+            id="accountDisplay"
+            class="account-display"
+            style="display: none"
+          ></div>
+        </div>
+
+        <div class="card" id="statusCard" style="display: none">
+          <h2>Contract Status</h2>
+          <div class="status-grid" id="contractStatus">
+            <div class="loading">
+              <div class="spinner"></div>
+              <p>Loading contract data...</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="balanceCard" style="display: none">
+          <h2>Your Balance in Contract</h2>
+          <div class="balance-card">
+            <div>Available to Withdraw</div>
+            <div class="balance-amount" id="balance">0 ETH</div>
+            <button class="btn" onclick="withdraw()">Withdraw Balance</button>
+          </div>
+        </div>
+
+        <div class="card" id="actionsCard" style="display: none">
+          <h2>Actions</h2>
+          <div id="activeActions">
+            <h3 style="color: #666; margin-bottom: 15px">Contract Signing</h3>
+            <div class="actions-grid">
+              <button class="btn" onclick="signAsTenant()">
+                Sign as Tenant
+              </button>
+              <button class="btn" onclick="signAsManager()">
+                Sign as Property Manager
+              </button>
+              <button class="btn btn-success" onclick="payDeposit()">
+                Pay Security Deposit
+              </button>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <h3 style="color: #666; margin-bottom: 15px">Payments</h3>
+            <div class="actions-grid">
+              <button class="btn btn-secondary" onclick="payRent()">
+                Pay Rent
+              </button>
+              <button class="btn" onclick="withdraw()">Withdraw Balance</button>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <h3 style="color: #666; margin-bottom: 15px">Landlord Actions</h3>
+            <div class="actions-grid">
+              <button class="btn btn-warning" onclick="claimDamages()">
+                Claim Damages
+              </button>
+              <button class="btn" onclick="returnDeposit()">
+                Return Deposit
+              </button>
+              <button class="btn btn-secondary" onclick="terminateContract()">
+                Terminate Contract
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card landlord-only" id="termsCard" style="display: none">
+          <h2>📝 Change Contract Terms (Landlord Only)</h2>
+          <p style="color: #666; margin-bottom: 15px">
+            <strong>Note:</strong> Contract must be terminated before changing
+            terms. All parties must re-sign after changes.
+          </p>
+
+          <div class="terms-editor">
+            <div class="terms-grid">
+              <div class="term-input">
+                <label>Rent Cost (ETH)</label>
+                <input
+                  type="number"
+                  id="newRentCost"
+                  step="0.01"
+                  placeholder="1.5"
+                />
+                <button
+                  class="btn btn-small"
+                  style="margin-top: 10px"
+                  onclick="changeRentCost()"
+                >
+                  Update Rent
+                </button>
+              </div>
+
+              <div class="term-input">
+                <label>Security Deposit (ETH)</label>
+                <input
+                  type="number"
+                  id="newDeposit"
+                  step="0.01"
+                  placeholder="3.0"
+                />
+                <button
+                  class="btn btn-small"
+                  style="margin-top: 10px"
+                  onclick="changeDeposit()"
+                >
+                  Update Deposit
+                </button>
+              </div>
+
+              <div class="term-input">
+                <label>Management Fee (%)</label>
+                <input
+                  type="number"
+                  id="newManagementFee"
+                  min="0"
+                  max="100"
+                  placeholder="10"
+                />
+                <button
+                  class="btn btn-small"
+                  style="margin-top: 10px"
+                  onclick="changeManagementFee()"
+                >
+                  Update Fee
+                </button>
+              </div>
+
+              <div class="term-input">
+                <label>Start Date</label>
+                <input type="datetime-local" id="newStartDate" />
+                <button
+                  class="btn btn-small"
+                  style="margin-top: 10px"
+                  onclick="changeStartDate()"
+                >
+                  Update Start
+                </button>
+              </div>
+
+              <div class="term-input">
+                <label>End Date</label>
+                <input type="datetime-local" id="newEndDate" />
+                <button
+                  class="btn btn-small"
+                  style="margin-top: 10px"
+                  onclick="changeEndDate()"
+                >
+                  Update End
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="historyCard" style="display: none">
+          <h2>Payment History</h2>
+          <div id="paymentHistory">
+            <p class="loading">No payments yet</p>
+          </div>
+        </div>
+
+        <div id="message" class="message"></div>
+      </div>
+
+      <div id="settingsPage" class="page">
+        <div class="card">
+          <h2>⚙️ Contract Configuration</h2>
+          <p style="color: #666; margin-bottom: 20px">
+            Configure which rental contract you want to interact with. You only
+            need to do this once.
+          </p>
+
+          <div class="input-group">
+            <label>Contract Address:</label>
+            <input
+              type="text"
+              id="contractAddress"
+              placeholder="0x1234567890abcdef..."
+            />
+            <small style="color: #666; display: block; margin-top: 5px">
+              Enter the rental contract address you want to connect to
+            </small>
+          </div>
+
+          <button class="btn" onclick="saveConfig()">Save Configuration</button>
+
+          <div
+            style="
+              margin-top: 30px;
+              padding: 20px;
+              background: #f8f9fa;
+              border-radius: 8px;
+            "
+          >
+            <h3 style="color: #333; margin-bottom: 10px">
+              💡 Where to find your contract address?
+            </h3>
+            <ul style="color: #666; line-height: 1.8">
+              <li>After deploying with Truffle, check the migration output</li>
+              <li>Look in your browser console after deployment</li>
+              <li>
+                Check Etherscan (sepolia.etherscan.io for Sepolia testnet)
+              </li>
+              <li>Ask the landlord who deployed the contract</li>
+            </ul>
+          </div>
+
+          <div
+            style="
+              margin-top: 20px;
+              padding: 15px;
+              background: #fff3cd;
+              border-radius: 8px;
+              border-left: 4px solid #ffc107;
+            "
+          >
+            <strong style="color: #856404">⚠️ Current Configuration:</strong
+            ><br />
+            <span
+              id="currentConfig"
+              style="color: #666; font-family: monospace; word-break: break-all"
+            >
+              Not configured yet
+            </span>
           </div>
         </div>
       </div>
-
-      <div class="card" id="balanceCard" style="display: none">
-        <h2>Your Balance in Contract</h2>
-        <div class="balance-card">
-          <div>Available to Withdraw</div>
-          <div class="balance-amount" id="balance">0 ETH</div>
-          <button class="btn" onclick="withdraw()">Withdraw Balance</button>
-        </div>
-      </div>
-
-      <div class="card" id="actionsCard" style="display: none">
-        <h2>Actions</h2>
-        <div class="actions-grid">
-          <button class="btn" onclick="signAsTenant()">Sign as Tenant</button>
-          <button class="btn" onclick="signAsManager()">
-            Sign as Property Manager
-          </button>
-          <button class="btn btn-success" onclick="payDeposit()">
-            Pay Security Deposit
-          </button>
-          <button class="btn btn-secondary" onclick="payRent()">
-            Pay Rent
-          </button>
-          <button class="btn" onclick="claimDamages()">
-            Claim Damages (Landlord)
-          </button>
-          <button class="btn" onclick="returnDeposit()">
-            Return Deposit (Landlord)
-          </button>
-          <button class="btn" onclick="terminateContract()">
-            Terminate Contract
-          </button>
-        </div>
-      </div>
-
-      <div class="card" id="historyCard" style="display: none">
-        <h2>Payment History</h2>
-        <div id="paymentHistory">
-          <p class="loading">No payments yet</p>
-        </div>
-      </div>
-
-      <div id="message" class="message"></div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+      let web3;
+      let contract;
+      let account;
+      let CONTRACT_ADDRESS;
+
+      const CONTRACT_ABI = [
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_rentCost",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_securityDeposit",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_managementFeePercent",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_start",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_end",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "party",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "AgreedToTerms",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "ContractSigned",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "ContractTerminated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "DamagesClaimed",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "DepositPaid",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "DepositReturned",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "RentPaid",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "TermsChanged",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "active",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+          constant: true,
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "balance",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+          constant: true,
+        },
+        {
+          inputs: [],
+          name: "depositHeld",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+          constant: true,
+        },
+        {
+          inputs: [],
+          name: "depositPaid",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+          constant: true,
+        },
+        {
+          inputs: [],
+          name: "end",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+          constant: true,
+        },
+        {
+          inputs: [],
+          name: "landlord",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+          constant: true,
+        },
+        {
+          inputs: [],
+          name: "managementFeePercent",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+          constant: true,
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "paidRent",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "value",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+          constant: true,
+        },
+        {
+          inputs: [],
+          name: "propertyManager",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+          constant: true,
+        },
+        {
+          inputs: [],
+          name: "propertyManagerAgreed",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+          constant: true,
+        },
+        {
+          inputs: [],
+          name: "rentCost",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+          constant: true,
+        },
+        {
+          inputs: [],
+          name: "securityDeposit",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+          constant: true,
+        },
+        {
+          inputs: [],
+          name: "start",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+          constant: true,
+        },
+        {
+          inputs: [],
+          name: "tenant",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+          constant: true,
+        },
+        {
+          inputs: [],
+          name: "tenantAgreed",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+          constant: true,
+        },
+        {
+          inputs: [],
+          name: "signAsTenant",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "signAsPropertyManager",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "payDeposit",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+          payable: true,
+        },
+        {
+          inputs: [],
+          name: "payRent",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+          payable: true,
+        },
+        {
+          inputs: [],
+          name: "terminateContract",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "cost",
+              type: "uint256",
+            },
+          ],
+          name: "changeRentCost",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "cost",
+              type: "uint256",
+            },
+          ],
+          name: "changeDepositValue",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "percentage",
+              type: "uint256",
+            },
+          ],
+          name: "changeManagementFee",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "date",
+              type: "uint256",
+            },
+          ],
+          name: "changeStartDate",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "date",
+              type: "uint256",
+            },
+          ],
+          name: "changeEndDate",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "claimDamages",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "returnDeposit",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "withdraw",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "paymentIndex",
+              type: "uint256",
+            },
+          ],
+          name: "getPayment",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "id",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "value",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "timestamp",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct RentalAgreement.Payment",
+              name: "",
+              type: "tuple",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+          constant: true,
+        },
+      ];
+
+      window.onload = function () {
+        const savedAddress = localStorage.getItem("contractAddress");
+
+        if (savedAddress) {
+          CONTRACT_ADDRESS = savedAddress;
+          setTimeout(() => {
+            const addressInput = document.getElementById("contractAddress");
+            const configDisplay = document.getElementById("currentConfig");
+
+            if (addressInput) {
+              addressInput.value = savedAddress;
+            }
+            if (configDisplay) {
+              configDisplay.textContent = savedAddress;
+            }
+          }, 100);
+        }
+      };
+
+      function showPage(pageName) {
+        const mainPage = document.getElementById("mainPage");
+        const settingsPage = document.getElementById("settingsPage");
+
+        if (!mainPage || !settingsPage) {
+          console.error("Page elements not found");
+          return;
+        }
+
+        mainPage.classList.remove("active");
+        settingsPage.classList.remove("active");
+
+        document.querySelectorAll(".nav-tab").forEach((tab) => {
+          tab.classList.remove("active");
+        });
+
+        if (pageName === "main") {
+          mainPage.classList.add("active");
+          document.querySelectorAll(".nav-tab")[0].classList.add("active");
+        } else if (pageName === "settings") {
+          settingsPage.classList.add("active");
+          document.querySelectorAll(".nav-tab")[1].classList.add("active");
+
+          const savedAddress = localStorage.getItem("contractAddress");
+          const configDisplay = document.getElementById("currentConfig");
+          const addressInput = document.getElementById("contractAddress");
+
+          if (savedAddress) {
+            if (configDisplay) {
+              configDisplay.textContent = savedAddress;
+            }
+            if (addressInput) {
+              addressInput.value = savedAddress;
+            }
+          }
+        }
+      }
+
+      function saveConfig() {
+        const address = document.getElementById("contractAddress").value.trim();
+
+        if (!address) {
+          showMessage("Please provide a contract address", "error");
+          return;
+        }
+
+        if (!address.startsWith("0x") || address.length !== 42) {
+          showMessage("Invalid contract address format", "error");
+          return;
+        }
+
+        localStorage.setItem("contractAddress", address);
+        CONTRACT_ADDRESS = address;
+        document.getElementById("currentConfig").textContent = address;
+        showMessage(
+          'Configuration saved! Go to Dashboard and click "Connect MetaMask".',
+          "success"
+        );
+      }
+
+      async function connectWallet() {
+        if (!CONTRACT_ADDRESS) {
+          showMessage(
+            "Please enter and save a contract address first!",
+            "error"
+          );
+          return;
+        }
+
+        if (typeof window.ethereum !== "undefined") {
+          try {
+            const accounts = await ethereum.request({
+              method: "eth_requestAccounts",
+            });
+            account = accounts[0];
+
+            web3 = new Web3(window.ethereum);
+
+            const networkId = await web3.eth.net.getId();
+            console.log("Connected to network:", networkId);
+
+            contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
+
+            document.getElementById("accountDisplay").style.display = "block";
+            document.getElementById(
+              "accountDisplay"
+            ).innerHTML = `<strong>Connected:</strong> ${account}`;
+
+            document.getElementById("statusCard").style.display = "block";
+            document.getElementById("balanceCard").style.display = "block";
+            document.getElementById("actionsCard").style.display = "block";
+            document.getElementById("termsCard").style.display = "block";
+            document.getElementById("historyCard").style.display = "block";
+
+            showMessage("Wallet connected successfully!", "success");
+
+            await loadContractStatus();
+            await loadBalance();
+            await loadPaymentHistory();
+
+            ethereum.on("accountsChanged", (accounts) => {
+              account = accounts[0];
+              loadContractStatus();
+              loadBalance();
+            });
+          } catch (error) {
+            showMessage("Error connecting wallet: " + error.message, "error");
+          }
+        } else {
+          showMessage("Please install MetaMask!", "error");
+          window.open("https://metamask.io/download/", "_blank");
+        }
+      }
+
+      async function loadContractStatus() {
+        try {
+          const landlord = await contract.methods.landlord().call();
+          const tenant = await contract.methods.tenant().call();
+          const manager = await contract.methods.propertyManager().call();
+          const rentCost = await contract.methods.rentCost().call();
+          const deposit = await contract.methods.securityDeposit().call();
+          const managementFee = await contract.methods
+            .managementFeePercent()
+            .call();
+          const active = await contract.methods.active().call();
+          const tenantAgreed = await contract.methods.tenantAgreed().call();
+          const managerAgreed = await contract.methods
+            .propertyManagerAgreed()
+            .call();
+          const depositPaid = await contract.methods.depositPaid().call();
+          const depositHeld = await contract.methods.depositHeld().call();
+          const start = await contract.methods.start().call();
+          const end = await contract.methods.end().call();
+
+          const startDate = new Date(Number(start) * 1000).toLocaleDateString();
+          const endDate = new Date(Number(end) * 1000).toLocaleDateString();
+
+          let statusBadge = "";
+          if (active) {
+            statusBadge =
+              '<span class="status-badge status-active">✅ Active</span>';
+          } else if (tenantAgreed || managerAgreed || depositPaid) {
+            statusBadge =
+              '<span class="status-badge status-pending">⏳ Pending Signatures</span>';
+          } else {
+            statusBadge =
+              '<span class="status-badge status-terminated">❌ Terminated / Not Started</span>';
+          }
+
+          document.getElementById("contractStatus").innerHTML = `
+                    <div class="status-item">
+                        <label>Contract Status</label>
+                        <div class="value">${statusBadge}</div>
+                    </div>
+                    <div class="status-item">
+                        <label>Monthly Rent</label>
+                        <div class="value">${web3.utils.fromWei(
+                          rentCost.toString(),
+                          "ether"
+                        )} ETH</div>
+                    </div>
+                    <div class="status-item">
+                        <label>Security Deposit</label>
+                        <div class="value">${web3.utils.fromWei(
+                          deposit.toString(),
+                          "ether"
+                        )} ETH</div>
+                    </div>
+                    <div class="status-item">
+                        <label>Management Fee</label>
+                        <div class="value">${managementFee}%</div>
+                    </div>
+                    <div class="status-item">
+                        <label>Deposit Held</label>
+                        <div class="value">${web3.utils.fromWei(
+                          depositHeld.toString(),
+                          "ether"
+                        )} ETH</div>
+                    </div>
+                    <div class="status-item">
+                        <label>Lease Period</label>
+                        <div class="value">${startDate} - ${endDate}</div>
+                    </div>
+                    <div class="status-item">
+                        <label>Landlord</label>
+                        <div class="value" style="font-size: 0.8em; word-break: break-all;">${landlord}</div>
+                    </div>
+                    <div class="status-item">
+                        <label>Tenant</label>
+                        <div class="value" style="font-size: 0.8em; word-break: break-all;">${tenant}</div>
+                    </div>
+                    <div class="status-item">
+                        <label>Property Manager</label>
+                        <div class="value" style="font-size: 0.8em; word-break: break-all;">${manager}</div>
+                    </div>
+                    <div class="status-item">
+                        <label>Tenant Agreed</label>
+                        <div class="value status-${
+                          tenantAgreed ? "yes" : "no"
+                        }">
+                            ${tenantAgreed ? "✅ Yes" : "❌ No"}
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <label>Manager Agreed</label>
+                        <div class="value status-${
+                          managerAgreed ? "yes" : "no"
+                        }">
+                            ${managerAgreed ? "✅ Yes" : "❌ No"}
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <label>Deposit Paid</label>
+                        <div class="value status-${depositPaid ? "yes" : "no"}">
+                            ${depositPaid ? "✅ Yes" : "❌ No"}
+                        </div>
+                    </div>
+                `;
+        } catch (error) {
+          console.error("Error loading contract status:", error);
+          showMessage(
+            "Error loading contract status: " + error.message,
+            "error"
+          );
+        }
+      }
+
+      async function loadBalance() {
+        try {
+          const balance = await contract.methods.balance(account).call();
+          document.getElementById("balance").innerHTML = `${web3.utils.fromWei(
+            balance.toString(),
+            "ether"
+          )} ETH`;
+        } catch (error) {
+          console.error("Error loading balance:", error);
+        }
+      }
+
+      async function loadPaymentHistory() {
+        try {
+          let historyHtml = "";
+          let index = 0;
+          let foundPayments = false;
+
+          while (index < 100) {
+            try {
+              const payment = await contract.methods.paidRent(index).call();
+
+              if (payment.id && Number(payment.id) > 0) {
+                foundPayments = true;
+                const date = new Date(
+                  Number(payment.timestamp) * 1000
+                ).toLocaleString();
+                const amount = web3.utils.fromWei(
+                  payment.value.toString(),
+                  "ether"
+                );
+
+                historyHtml += `
+                                <div class="payment-item">
+                                    <div>
+                                        <strong>Payment #${payment.id}</strong><br>
+                                        <small>${date}</small>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <strong>${amount} ETH</strong>
+                                    </div>
+                                </div>
+                            `;
+              }
+              index++;
+            } catch (e) {
+              break;
+            }
+          }
+
+          document.getElementById("paymentHistory").innerHTML = foundPayments
+            ? historyHtml
+            : '<p class="loading">No payments yet</p>';
+        } catch (error) {
+          console.error("Error loading payment history:", error);
+          document.getElementById("paymentHistory").innerHTML =
+            '<p class="loading">No payments yet</p>';
+        }
+      }
+
+      async function signAsTenant() {
+        try {
+          await contract.methods.signAsTenant().send({ from: account });
+          showMessage("Successfully signed as tenant!", "success");
+          await loadContractStatus();
+        } catch (error) {
+          showMessage("Error: " + error.message, "error");
+        }
+      }
+
+      async function signAsManager() {
+        try {
+          await contract.methods
+            .signAsPropertyManager()
+            .send({ from: account });
+          showMessage("Successfully signed as property manager!", "success");
+          await loadContractStatus();
+        } catch (error) {
+          showMessage("Error: " + error.message, "error");
+        }
+      }
+
+      async function payDeposit() {
+        try {
+          const deposit = await contract.methods.securityDeposit().call();
+          await contract.methods.payDeposit().send({
+            from: account,
+            value: deposit,
+          });
+          showMessage("Security deposit paid successfully!", "success");
+          await loadContractStatus();
+        } catch (error) {
+          showMessage("Error: " + error.message, "error");
+        }
+      }
+
+      async function payRent() {
+        try {
+          const rent = await contract.methods.rentCost().call();
+          await contract.methods.payRent().send({
+            from: account,
+            value: rent,
+          });
+          showMessage("Rent paid successfully!", "success");
+          await loadContractStatus();
+          await loadBalance();
+          await loadPaymentHistory();
+        } catch (error) {
+          showMessage("Error: " + error.message, "error");
+        }
+      }
+
+      async function withdraw() {
+        try {
+          const balance = await contract.methods.balance(account).call();
+
+          if (Number(balance) === 0) {
+            showMessage("No balance to withdraw", "error");
+            return;
+          }
+
+          const balanceInEth = web3.utils.fromWei(balance.toString(), "ether");
+
+          if (!confirm(`Withdraw ${balanceInEth} ETH to your wallet?`)) {
+            return;
+          }
+
+          await contract.methods.withdraw().send({ from: account });
+
+          showMessage(`Successfully withdrew ${balanceInEth} ETH!`, "success");
+          await loadBalance();
+          await loadContractStatus();
+        } catch (error) {
+          showMessage("Error: " + error.message, "error");
+        }
+      }
+
+      async function claimDamages() {
+        const amount = prompt("Enter damage amount in ETH:");
+        if (!amount) return;
+
+        try {
+          const weiAmount = web3.utils.toWei(amount, "ether");
+          await contract.methods
+            .claimDamages(weiAmount)
+            .send({ from: account });
+          showMessage(`Claimed ${amount} ETH for damages`, "success");
+          await loadContractStatus();
+          await loadBalance();
+        } catch (error) {
+          showMessage("Error: " + error.message, "error");
+        }
+      }
+
+      async function returnDeposit() {
+        try {
+          await contract.methods.returnDeposit().send({ from: account });
+          showMessage("Deposit returned to tenant!", "success");
+          await loadContractStatus();
+        } catch (error) {
+          showMessage("Error: " + error.message, "error");
+        }
+      }
+
+      async function terminateContract() {
+        if (
+          !confirm(
+            "Are you sure you want to terminate the contract? This will return the deposit to the tenant."
+          )
+        )
+          return;
+
+        try {
+          await contract.methods.terminateContract().send({ from: account });
+          showMessage("Contract terminated and deposit returned", "success");
+          await loadContractStatus();
+        } catch (error) {
+          showMessage("Error: " + error.message, "error");
+        }
+      }
+
+      async function changeRentCost() {
+        const newRent = document.getElementById("newRentCost").value;
+        if (!newRent) {
+          showMessage("Please enter a rent amount", "error");
+          return;
+        }
+
+        try {
+          const weiAmount = web3.utils.toWei(newRent, "ether");
+          await contract.methods
+            .changeRentCost(weiAmount)
+            .send({ from: account });
+          showMessage(
+            `Rent cost updated to ${newRent} ETH. All parties must re-sign.`,
+            "success"
+          );
+          await loadContractStatus();
+        } catch (error) {
+          showMessage("Error: " + error.message, "error");
+        }
+      }
+
+      async function changeDeposit() {
+        const newDeposit = document.getElementById("newDeposit").value;
+        if (!newDeposit) {
+          showMessage("Please enter a deposit amount", "error");
+          return;
+        }
+
+        try {
+          const weiAmount = web3.utils.toWei(newDeposit, "ether");
+          await contract.methods
+            .changeDepositValue(weiAmount)
+            .send({ from: account });
+          showMessage(
+            `Security deposit updated to ${newDeposit} ETH. All parties must re-sign.`,
+            "success"
+          );
+          await loadContractStatus();
+        } catch (error) {
+          showMessage("Error: " + error.message, "error");
+        }
+      }
+
+      async function changeManagementFee() {
+        const newFee = document.getElementById("newManagementFee").value;
+        if (!newFee) {
+          showMessage("Please enter a management fee percentage", "error");
+          return;
+        }
+
+        try {
+          await contract.methods
+            .changeManagementFee(newFee)
+            .send({ from: account });
+          showMessage(
+            `Management fee updated to ${newFee}%. All parties must re-sign.`,
+            "success"
+          );
+          await loadContractStatus();
+        } catch (error) {
+          showMessage("Error: " + error.message, "error");
+        }
+      }
+
+      async function changeStartDate() {
+        const newStart = document.getElementById("newStartDate").value;
+        if (!newStart) {
+          showMessage("Please select a start date", "error");
+          return;
+        }
+
+        try {
+          const timestamp = Math.floor(new Date(newStart).getTime() / 1000);
+          await contract.methods
+            .changeStartDate(timestamp)
+            .send({ from: account });
+          showMessage(
+            "Start date updated. All parties must re-sign.",
+            "success"
+          );
+          await loadContractStatus();
+        } catch (error) {
+          showMessage("Error: " + error.message, "error");
+        }
+      }
+
+      async function changeEndDate() {
+        const newEnd = document.getElementById("newEndDate").value;
+        if (!newEnd) {
+          showMessage("Please select an end date", "error");
+          return;
+        }
+
+        try {
+          const timestamp = Math.floor(new Date(newEnd).getTime() / 1000);
+          await contract.methods
+            .changeEndDate(timestamp)
+            .send({ from: account });
+          showMessage("End date updated. All parties must re-sign.", "success");
+          await loadContractStatus();
+        } catch (error) {
+          showMessage("Error: " + error.message, "error");
+        }
+      }
+
+      function showMessage(msg, type) {
+        const messageDiv = document.getElementById("message");
+        messageDiv.className = `message ${type}`;
+        messageDiv.innerHTML = msg;
+        messageDiv.style.display = "block";
+
+        setTimeout(() => {
+          messageDiv.style.display = "none";
+        }, 5000);
+      }
+
+      setInterval(() => {
+        if (contract && account) {
+          loadContractStatus();
+          loadBalance();
+          loadPaymentHistory();
+        }
+      }, 15000);
+    </script>
   </body>
 </html>
