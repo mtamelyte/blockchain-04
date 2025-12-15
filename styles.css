@@ -6,7 +6,7 @@
 
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #667eea;
   min-height: 100vh;
   padding: 20px;
 }
@@ -47,7 +47,7 @@ body {
 }
 
 .btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #667eea;
   color: white;
   border: none;
   padding: 12px 30px;
@@ -70,15 +70,15 @@ body {
 }
 
 .btn-secondary {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: #f093fb;
 }
 
 .btn-success {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: #4facfe 0%;
 }
 
 .btn-warning {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  background: #fa709a;
 }
 
 .btn-small {
@@ -233,7 +233,7 @@ body {
 }
 
 .balance-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #667eea;
   color: white;
   padding: 20px;
   border-radius: 10px;
@@ -350,7 +350,7 @@ body {
 }
 
 .nav-tab.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #667eea;
   color: white;
   border-color: transparent;
 }
