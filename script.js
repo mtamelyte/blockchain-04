@@ -769,9 +769,7 @@ async function determineUserRole() {
     const roleDisplay = document.getElementById("userRole");
     if (userRole) {
       roleDisplay.style.display = "block";
-      const roleEmoji =
-        userRole === "landlord" ? "🏛️" : userRole === "tenant" ? "👤" : "👨‍💼";
-      roleDisplay.innerHTML = `<span class="status-badge status-active">${roleEmoji} You are the ${
+      roleDisplay.innerHTML = `<span class="status-badge status-active">You are the ${
         userRole.charAt(0).toUpperCase() + userRole.slice(1)
       }</span>`;
     } else {
@@ -847,7 +845,7 @@ async function showRelevantSections() {
 
         if (!active && (tenantAgreed || managerAgreed)) {
           document.getElementById("signMessage").innerHTML =
-            "<strong>🔄 Contract has been terminated.</strong><br>" +
+            "<strong>Contract has been terminated.</strong><br>" +
             "Sign up to participate in the new contract terms:";
         } else {
           document.getElementById("signMessage").textContent =
@@ -924,16 +922,16 @@ async function loadContractStatus() {
 
     let statusBadge = "";
     if (active) {
-      statusBadge = '<span class="status-badge status-active">✅ Active</span>';
+      statusBadge = '<span class="status-badge status-active">Active</span>';
     } else if (tenantAgreed && managerAgreed && !depositPaid) {
       statusBadge =
-        '<span class="status-badge status-pending">⏳ Awaiting Security Deposit</span>';
+        '<span class="status-badge status-pending">Awaiting Security Deposit</span>';
     } else if (tenantAgreed || managerAgreed || depositPaid) {
       statusBadge =
-        '<span class="status-badge status-pending">⏳ Pending Signatures</span>';
+        '<span class="status-badge status-pending">Pending Signatures</span>';
     } else {
       statusBadge =
-        '<span class="status-badge status-terminated">❌ Terminated / Not Started</span>';
+        '<span class="status-badge status-terminated">Terminated / Not Started</span>';
     }
 
     document.getElementById("contractStatus").innerHTML = `
@@ -985,19 +983,19 @@ async function loadContractStatus() {
             <div class="status-item">
                 <label>Tenant Agreed</label>
                 <div class="value status-${tenantAgreed ? "yes" : "no"}">
-                    ${tenantAgreed ? "✅ Yes" : "❌ No"}
+                    ${tenantAgreed ? "Yes" : "No"}
                 </div>
             </div>
             <div class="status-item">
                 <label>Manager Agreed</label>
                 <div class="value status-${managerAgreed ? "yes" : "no"}">
-                    ${managerAgreed ? "✅ Yes" : "❌ No"}
+                    ${managerAgreed ? "Yes" : "No"}
                 </div>
             </div>
             <div class="status-item">
                 <label>Deposit Paid</label>
                 <div class="value status-${depositPaid ? "yes" : "no"}">
-                    ${depositPaid ? "✅ Yes" : "❌ No"}
+                    ${depositPaid ? "Yes" : "No"}
                 </div>
             </div>
         `;

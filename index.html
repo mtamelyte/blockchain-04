@@ -10,17 +10,15 @@
   <body>
     <div class="container">
       <div class="header">
-        <h1>🏠 Rental Smart Contract</h1>
+        <h1>Rental Smart Contract</h1>
         <p>Decentralized Rental Agreement Management</p>
       </div>
 
       <div class="nav-tabs">
         <button class="nav-tab active" onclick="showPage('main')">
-          🏠 Dashboard
+          Dashboard
         </button>
-        <button class="nav-tab" onclick="showPage('settings')">
-          <span class="settings-icon">⚙️</span> Settings
-        </button>
+        <button class="nav-tab" onclick="showPage('settings')">Settings</button>
       </div>
 
       <div id="mainPage" class="page active">
@@ -51,7 +49,7 @@
         </div>
 
         <div class="card" id="signCard" style="display: none">
-          <h2>📝 Sign Rental Agreement</h2>
+          <h2>Sign Rental Agreement</h2>
           <p style="color: #666; margin-bottom: 20px" id="signMessage">
             You need to sign this rental agreement to proceed. Choose your role:
           </p>
@@ -75,7 +73,7 @@
         </div>
 
         <div class="card" id="tenantCard" style="display: none">
-          <h2>👤 Tenant Actions</h2>
+          <h2>Tenant Actions</h2>
 
           <div id="depositSection" style="display: none">
             <h3 style="color: #666; margin-bottom: 15px">Security Deposit</h3>
@@ -113,7 +111,7 @@
         </div>
 
         <div class="card" id="managerCard" style="display: none">
-          <h2>👨‍💼 Property Manager Actions</h2>
+          <h2>Property Manager Actions</h2>
           <div class="actions-grid">
             <button class="btn btn-secondary" onclick="withdraw()">
               Withdraw Balance
@@ -133,7 +131,7 @@
         </div>
 
         <div class="card" id="landlordCard" style="display: none">
-          <h2>🏛️ Landlord Actions</h2>
+          <h2>Landlord Actions</h2>
 
           <div
             id="landlordSignSection"
@@ -183,7 +181,7 @@
         </div>
 
         <div class="card landlord-only" id="termsCard" style="display: none">
-          <h2>📝 Change Contract Terms</h2>
+          <h2>Change Contract Terms</h2>
           <p style="color: #666; margin-bottom: 15px">
             <strong>Note:</strong> Contract must be terminated before changing
             terms. All parties must re-sign after changes.
@@ -281,7 +279,7 @@
 
       <div id="settingsPage" class="page">
         <div class="card">
-          <h2>⚙️ Contract Configuration</h2>
+          <h2>Contract Configuration</h2>
           <p style="color: #666; margin-bottom: 20px">
             Configure which rental contract you want to interact with. You only
             need to do this once.
@@ -307,7 +305,7 @@
             "
           >
             <h3 style="color: #333; margin-bottom: 10px">
-              💡 Where to find your contract address?
+              Where to find your contract address?
             </h3>
             <ul style="color: #666; line-height: 1.8">
               <li>After deploying with Truffle, check the migration output</li>
@@ -328,8 +326,7 @@
               border-left: 4px solid #ffc107;
             "
           >
-            <strong style="color: #856404">⚠️ Current Configuration:</strong
-            ><br />
+            <strong style="color: #856404">Current Configuration:</strong><br />
             <span
               id="currentConfig"
               style="color: #666; font-family: monospace; word-break: break-all"
