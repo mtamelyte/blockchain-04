@@ -14,7 +14,6 @@
         <p>Decentralized Rental Agreement Management</p>
       </div>
 
-      <!-- Navigation Tabs -->
       <div class="nav-tabs">
         <button class="nav-tab active" onclick="showPage('main')">
           🏠 Dashboard
@@ -24,9 +23,7 @@
         </button>
       </div>
 
-      <!-- Main Page -->
       <div id="mainPage" class="page active">
-        <!-- Connect Wallet -->
         <div class="card connect-section">
           <h2>Connect Wallet</h2>
           <button class="btn" id="connectBtn" onclick="connectWallet()">
@@ -43,7 +40,6 @@
           ></div>
         </div>
 
-        <!-- Contract Status -->
         <div class="card" id="statusCard" style="display: none">
           <h2>Contract Status</h2>
           <div class="status-grid" id="contractStatus">
@@ -54,7 +50,6 @@
           </div>
         </div>
 
-        <!-- Sign Contract Section (Non-Landlords who haven't signed) -->
         <div class="card" id="signCard" style="display: none">
           <h2>📝 Sign Rental Agreement</h2>
           <p style="color: #666; margin-bottom: 20px" id="signMessage">
@@ -79,7 +74,6 @@
           </div>
         </div>
 
-        <!-- Tenant Actions -->
         <div class="card" id="tenantCard" style="display: none">
           <h2>👤 Tenant Actions</h2>
 
@@ -118,7 +112,6 @@
           </div>
         </div>
 
-        <!-- Property Manager Actions -->
         <div class="card" id="managerCard" style="display: none">
           <h2>👨‍💼 Property Manager Actions</h2>
           <div class="actions-grid">
@@ -139,7 +132,6 @@
           </div>
         </div>
 
-        <!-- Landlord Actions -->
         <div class="card" id="landlordCard" style="display: none">
           <h2>🏛️ Landlord Actions</h2>
 
@@ -181,7 +173,6 @@
           </div>
         </div>
 
-        <!-- Balance Card -->
         <div class="card" id="balanceCard" style="display: none">
           <h2>Your Balance in Contract</h2>
           <div class="balance-card">
@@ -191,7 +182,6 @@
           </div>
         </div>
 
-        <!-- Change Terms (Landlord Only) -->
         <div class="card landlord-only" id="termsCard" style="display: none">
           <h2>📝 Change Contract Terms</h2>
           <p style="color: #666; margin-bottom: 15px">
@@ -280,19 +270,15 @@
           </div>
         </div>
 
-        <!-- Payment History -->
         <div class="card" id="historyCard" style="display: none">
           <h2>Payment History</h2>
           <div id="paymentHistory">
             <p class="loading">No payments yet</p>
           </div>
         </div>
-
-        <!-- Messages -->
         <div id="message" class="message"></div>
       </div>
 
-      <!-- Settings Page -->
       <div id="settingsPage" class="page">
         <div class="card">
           <h2>⚙️ Contract Configuration</h2>
@@ -300,7 +286,6 @@
             Configure which rental contract you want to interact with. You only
             need to do this once.
           </p>
-
           <div class="input-group">
             <label>Contract Address:</label>
             <input
@@ -312,9 +297,7 @@
               Enter the rental contract address you want to connect to
             </small>
           </div>
-
           <button class="btn" onclick="saveConfig()">Save Configuration</button>
-
           <div
             style="
               margin-top: 30px;

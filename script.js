@@ -2,9 +2,8 @@ let web3;
 let contract;
 let account;
 let CONTRACT_ADDRESS;
-let userRole = null; // 'landlord', 'tenant', 'manager', or null
+let userRole = null;
 
-// Hardcoded ABI - REPLACE WITH YOUR ACTUAL ABI
 const CONTRACT_ABI = [
   {
     inputs: [
@@ -611,7 +610,6 @@ const CONTRACT_ABI = [
   },
 ];
 
-// Load saved configuration
 window.onload = function () {
   const savedAddress = localStorage.getItem("contractAddress");
 
@@ -753,7 +751,6 @@ async function determineUserRole() {
 
     const zeroAddress = "0x0000000000000000000000000000000000000000";
 
-    // Check roles based on addresses, not contract state
     if (accountLower === landlordLower) {
       userRole = "landlord";
     } else if (tenantLower !== zeroAddress && accountLower === tenantLower) {
@@ -769,7 +766,6 @@ async function determineUserRole() {
     console.log("Manager address:", manager);
     console.log("Your address:", account);
 
-    // Display role
     const roleDisplay = document.getElementById("userRole");
     if (userRole) {
       roleDisplay.style.display = "block";
@@ -787,7 +783,6 @@ async function determineUserRole() {
 }
 
 async function showRelevantSections() {
-  // Hide all action cards first
   document.getElementById("signCard").style.display = "none";
   document.getElementById("tenantCard").style.display = "none";
   document.getElementById("managerCard").style.display = "none";
@@ -797,7 +792,6 @@ async function showRelevantSections() {
   document.getElementById("leaveTenantBtn").style.display = "none";
   document.getElementById("leaveManagerBtn").style.display = "none";
 
-  // Always show these
   document.getElementById("statusCard").style.display = "block";
   document.getElementById("balanceCard").style.display = "block";
   document.getElementById("historyCard").style.display = "block";
@@ -811,10 +805,8 @@ async function showRelevantSections() {
     const zeroAddress = "0x0000000000000000000000000000000000000000";
 
     if (userRole === "landlord") {
-      // Landlord sees everything
       document.getElementById("landlordCard").style.display = "block";
 
-      // Show option to sign as manager if no manager exists or contract not active
       if (!active && (manager === zeroAddress || !managerAgreed)) {
         document.getElementById("landlordSignSection").style.display = "block";
       }
@@ -823,32 +815,26 @@ async function showRelevantSections() {
         document.getElementById("termsCard").style.display = "block";
       }
     } else if (userRole === "tenant") {
-      // Tenant who has signed (address is set)
       document.getElementById("tenantCard").style.display = "block";
 
-      // Show deposit section if not paid yet
       if (!depositPaid) {
         document.getElementById("depositSection").style.display = "block";
       } else {
         document.getElementById("depositSection").style.display = "none";
       }
 
-      // Show leave button if contract is not active
       if (!active) {
         document.getElementById("leaveTenantBtn").style.display =
           "inline-block";
       }
     } else if (userRole === "manager") {
-      // Manager who has active role
       document.getElementById("managerCard").style.display = "block";
 
-      // Show leave button if contract is not active
       if (!active) {
         document.getElementById("leaveManagerBtn").style.display =
           "inline-block";
       }
     } else {
-      // User hasn't signed or contract is terminated - show sign options
       const tenant = await contract.methods.tenant().call();
       const manager = await contract.methods.propertyManager().call();
       const zeroAddress = "0x0000000000000000000000000000000000000000";
@@ -856,22 +842,18 @@ async function showRelevantSections() {
       const tenantExists = tenant !== zeroAddress;
       const managerExists = manager !== zeroAddress;
 
-      // Only show sign card if there's at least one available role
       if (!tenantExists || !managerExists) {
         document.getElementById("signCard").style.display = "block";
 
         if (!active && (tenantAgreed || managerAgreed)) {
-          // Contract was terminated, show re-sign message
           document.getElementById("signMessage").innerHTML =
             "<strong>🔄 Contract has been terminated.</strong><br>" +
             "Sign up to participate in the new contract terms:";
         } else {
-          // Fresh contract
           document.getElementById("signMessage").textContent =
             "You need to sign this rental agreement to proceed. Choose your role:";
         }
 
-        // Show/hide buttons based on availability
         const signButtons = document.getElementById("signButtons");
         signButtons.style.display = "grid";
         signButtons.innerHTML = "";
@@ -894,7 +876,6 @@ async function showRelevantSections() {
 
         document.getElementById("resignButtons").style.display = "none";
       } else {
-        // Both roles are filled, show message
         document.getElementById("signCard").style.display = "block";
         document.getElementById("signMessage").innerHTML =
           "<strong>⚠️ All roles are filled.</strong><br>" +
@@ -904,7 +885,6 @@ async function showRelevantSections() {
       }
     }
 
-    // Update rent and deposit amounts
     const rentCost = await contract.methods.rentCost().call();
     const deposit = await contract.methods.securityDeposit().call();
 
@@ -1086,7 +1066,6 @@ async function loadPaymentHistory() {
 
 async function signAsTenant() {
   try {
-    // Check if tenant already exists
     const tenant = await contract.methods.tenant().call();
     const zeroAddress = "0x0000000000000000000000000000000000000000";
 
@@ -1110,7 +1089,6 @@ async function signAsTenant() {
 
 async function signAsManager() {
   try {
-    // Check if manager already exists
     const manager = await contract.methods.propertyManager().call();
     const zeroAddress = "0x0000000000000000000000000000000000000000";
 
@@ -1136,7 +1114,6 @@ async function signAsManager() {
 }
 
 async function resignContract() {
-  // Re-sign based on current role
   if (userRole === "tenant") {
     await signAsTenant();
   } else if (userRole === "manager") {
@@ -1148,7 +1125,6 @@ async function payDeposit() {
   try {
     const deposit = await contract.methods.securityDeposit().call();
 
-    // Check deposit amount and show confirmation
     const depositEth = web3.utils.fromWei(deposit.toString(), "ether");
     if (
       !confirm(
@@ -1255,7 +1231,6 @@ async function terminateContract() {
       "success"
     );
 
-    // Reset user role since contract is reset
     userRole = null;
 
     await determineUserRole();
@@ -1266,7 +1241,6 @@ async function terminateContract() {
   }
 }
 
-// Change Terms Functions
 async function changeRentCost() {
   const newRent = document.getElementById("newRentCost").value;
   if (!newRent) {
@@ -1405,7 +1379,6 @@ async function leaveContract() {
   }
 }
 
-// Auto-refresh every 15 seconds
 setInterval(() => {
   if (contract && account) {
     loadContractStatus();
