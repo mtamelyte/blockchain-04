@@ -66,26 +66,27 @@ contract RentalAgreement{
    }
 
    function signAsPropertyManager() external {
-      require(msg.sender!=tenant, "Tenant can't manage the property they are renting");
+      require(msg.sender != tenant, "Tenant can't manage the property they are renting");
       propertyManager = msg.sender;
       propertyManagerAgreed = true;
       signContract();
 
       emit AgreedToTerms(propertyManager, block.timestamp);
-   }
+}
 
    function payDeposit() external payable{
       require(msg.sender == tenant, "Only tenant is allowed.");
-      require(!depositPaid, "Deposit already paid");
+      require(!active, "Cannot pay deposit while contract is active"); // Changed this
       require(msg.value == securityDeposit);
 
-      depositHeld = msg.value;
+      depositHeld += msg.value;
       depositPaid = true;
 
       emit DepositPaid(block.timestamp);
 
       signContract();
-   }
+}
+
 
    function signContract() internal {
       if(tenantAgreed && propertyManagerAgreed && depositPaid){
@@ -119,8 +120,19 @@ contract RentalAgreement{
       msg.sender == tenant || 
       msg.sender == propertyManager, 
       "Not a party in this contract");
+   
       active = false;
-      returnDeposit();
+   
+      if (depositHeld > 0) {
+         returnDeposit();
+      }
+
+      tenant = address(0);
+      propertyManager = address(0);
+      tenantAgreed = false;
+      propertyManagerAgreed = false;
+      depositPaid = false;
+      delete paidRent;
 
       emit ContractTerminated(block.timestamp);
    }
@@ -208,3 +220,4 @@ contract RentalAgreement{
       return paidRent[paymentIndex];
    }
 }
+
