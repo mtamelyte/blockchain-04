@@ -50,7 +50,7 @@
 
         <div class="card" id="signCard" style="display: none">
           <h2>Sign Rental Agreement</h2>
-          <p style="color: #666; margin-bottom: 20px" id="signMessage">
+          <p style="color: #9a8873; margin-bottom: 20px" id="signMessage">
             You need to sign this rental agreement to proceed. Choose your role:
           </p>
           <div class="actions-grid" id="signButtons">
@@ -76,8 +76,10 @@
           <h2>Tenant Actions</h2>
 
           <div id="depositSection" style="display: none">
-            <h3 style="color: #666; margin-bottom: 15px">Security Deposit</h3>
-            <p style="color: #666; margin-bottom: 15px">
+            <h3 style="color: #9a8873; margin-bottom: 15px">
+              Security Deposit
+            </h3>
+            <p style="color: #9a8873; margin-bottom: 15px">
               You must pay the security deposit to activate the contract.
             </p>
             <button class="btn btn-success btn-large" onclick="payDeposit()">
@@ -86,14 +88,14 @@
             <div class="section-divider"></div>
           </div>
 
-          <h3 style="color: #666; margin-bottom: 15px">Monthly Rent</h3>
+          <h3 style="color: #9a8873; margin-bottom: 15px">Monthly Rent</h3>
           <button class="btn btn-secondary btn-large" onclick="payRent()">
             Pay Rent (<span id="rentAmount">0</span> ETH)
           </button>
 
           <div class="section-divider"></div>
 
-          <h3 style="color: #666; margin-bottom: 15px">Other Actions</h3>
+          <h3 style="color: #9a8873; margin-bottom: 15px">Other Actions</h3>
           <div class="actions-grid">
             <button class="btn" onclick="withdraw()">Withdraw Balance</button>
             <button class="btn btn-warning" onclick="terminateContract()">
@@ -137,10 +139,10 @@
             id="landlordSignSection"
             style="display: none; margin-bottom: 20px"
           >
-            <h3 style="color: #666; margin-bottom: 15px">
+            <h3 style="color: #0a122a; margin-bottom: 15px">
               No Property Manager
             </h3>
-            <p style="color: #666; margin-bottom: 15px">
+            <p style="color: #9a8873; margin-bottom: 15px">
               You can sign as the property manager to manage this property
               yourself.
             </p>
@@ -150,9 +152,11 @@
             <div class="section-divider"></div>
           </div>
 
-          <h3 style="color: #666; margin-bottom: 15px">Deposit Management</h3>
+          <h3 style="color: #0a122a; margin-bottom: 15px">
+            Deposit Management
+          </h3>
           <div class="actions-grid">
-            <button class="btn btn-warning" onclick="claimDamages()">
+            <button class="btn btn-success" onclick="claimDamages()">
               Claim Damages
             </button>
             <button class="btn btn-success" onclick="returnDeposit()">
@@ -162,10 +166,12 @@
 
           <div class="section-divider"></div>
 
-          <h3 style="color: #666; margin-bottom: 15px">Contract Management</h3>
+          <h3 style="color: #0a122a; margin-bottom: 15px">
+            Contract Management
+          </h3>
           <div class="actions-grid">
             <button class="btn" onclick="withdraw()">Withdraw Balance</button>
-            <button class="btn btn-warning" onclick="terminateContract()">
+            <button class="btn" onclick="terminateContract()">
               Terminate Contract
             </button>
           </div>
@@ -182,7 +188,7 @@
 
         <div class="card landlord-only" id="termsCard" style="display: none">
           <h2>Change Contract Terms</h2>
-          <p style="color: #666; margin-bottom: 15px">
+          <p style="color: #0a122a; margin-bottom: 15px">
             <strong>Note:</strong> Contract must be terminated before changing
             terms. All parties must re-sign after changes.
           </p>
@@ -280,7 +286,7 @@
       <div id="settingsPage" class="page">
         <div class="card">
           <h2>Contract Configuration</h2>
-          <p style="color: #666; margin-bottom: 20px">
+          <p style="color: #9a8873; margin-bottom: 20px">
             Configure which rental contract you want to interact with. You only
             need to do this once.
           </p>
@@ -291,31 +297,11 @@
               id="contractAddress"
               placeholder="0x1234567890abcdef..."
             />
-            <small style="color: #666; display: block; margin-top: 5px">
+            <small style="color: #9a8873; display: block; margin-top: 5px">
               Enter the rental contract address you want to connect to
             </small>
           </div>
           <button class="btn" onclick="saveConfig()">Save Configuration</button>
-          <div
-            style="
-              margin-top: 30px;
-              padding: 20px;
-              background: #f8f9fa;
-              border-radius: 8px;
-            "
-          >
-            <h3 style="color: #333; margin-bottom: 10px">
-              Where to find your contract address?
-            </h3>
-            <ul style="color: #666; line-height: 1.8">
-              <li>After deploying with Truffle, check the migration output</li>
-              <li>Look in your browser console after deployment</li>
-              <li>
-                Check Etherscan (sepolia.etherscan.io for Sepolia testnet)
-              </li>
-              <li>Ask the landlord who deployed the contract</li>
-            </ul>
-          </div>
 
           <div
             style="
@@ -329,7 +315,11 @@
             <strong style="color: #856404">Current Configuration:</strong><br />
             <span
               id="currentConfig"
-              style="color: #666; font-family: monospace; word-break: break-all"
+              style="
+                color: #9a8873;
+                font-family: monospace;
+                word-break: break-all;
+              "
             >
               Not configured yet
             </span>

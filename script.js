@@ -769,7 +769,7 @@ async function determineUserRole() {
     const roleDisplay = document.getElementById("userRole");
     if (userRole) {
       roleDisplay.style.display = "block";
-      roleDisplay.innerHTML = `<span class="status-badge status-active">You are the ${
+      roleDisplay.innerHTML = `<span class="status-badge status-active">${
         userRole.charAt(0).toUpperCase() + userRole.slice(1)
       }</span>`;
     } else {
@@ -967,18 +967,6 @@ async function loadContractStatus() {
             <div class="status-item">
                 <label>Lease Period</label>
                 <div class="value">${startDate} - ${endDate}</div>
-            </div>
-            <div class="status-item">
-                <label>Landlord</label>
-                <div class="value" style="font-size: 0.8em; word-break: break-all;">${landlord}</div>
-            </div>
-            <div class="status-item">
-                <label>Tenant</label>
-                <div class="value" style="font-size: 0.8em; word-break: break-all;">${tenant}</div>
-            </div>
-            <div class="status-item">
-                <label>Property Manager</label>
-                <div class="value" style="font-size: 0.8em; word-break: break-all;">${manager}</div>
             </div>
             <div class="status-item">
                 <label>Tenant Agreed</label>
