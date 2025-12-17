@@ -9,6 +9,8 @@ The contract tracks the beginning and end of the lease, and allows these entitie
 
 ### Sequence diagram
 
+<img width="585" height="1038" alt="Untitled (1)" src="https://github.com/user-attachments/assets/064d19c8-4f7e-4c31-b129-160ef1c99371" />
+
 ## Testing
 
 The contract was compiled and deployed using Truffle, and tested with Ganache and the Sepolia test network.
