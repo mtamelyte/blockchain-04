@@ -787,9 +787,6 @@ async function showRelevantSections() {
   document.getElementById("landlordCard").style.display = "none";
   document.getElementById("termsCard").style.display = "none";
   document.getElementById("landlordSignSection").style.display = "none";
-  document.getElementById("leaveTenantBtn").style.display = "none";
-  document.getElementById("leaveManagerBtn").style.display = "none";
-
   document.getElementById("statusCard").style.display = "block";
   document.getElementById("balanceCard").style.display = "block";
   document.getElementById("historyCard").style.display = "block";
@@ -820,18 +817,8 @@ async function showRelevantSections() {
       } else {
         document.getElementById("depositSection").style.display = "none";
       }
-
-      if (!active) {
-        document.getElementById("leaveTenantBtn").style.display =
-          "inline-block";
-      }
     } else if (userRole === "manager") {
       document.getElementById("managerCard").style.display = "block";
-
-      if (!active) {
-        document.getElementById("leaveManagerBtn").style.display =
-          "inline-block";
-      }
     } else {
       const tenant = await contract.methods.tenant().call();
       const manager = await contract.methods.propertyManager().call();
@@ -1331,38 +1318,6 @@ function showMessage(msg, type) {
   setTimeout(() => {
     messageDiv.style.display = "none";
   }, 5000);
-}
-
-async function leaveContract() {
-  if (
-    !confirm(
-      "Are you sure you want to leave this contract? A new person can take your place."
-    )
-  ) {
-    return;
-  }
-
-  try {
-    if (userRole === "tenant") {
-      await contract.methods.leaveTenant().send({ from: account });
-      showMessage(
-        "You have left the contract. A new tenant can now sign.",
-        "success"
-      );
-    } else if (userRole === "manager") {
-      await contract.methods.leavePropertyManager().send({ from: account });
-      showMessage(
-        "You have left the contract. A new property manager can now sign.",
-        "success"
-      );
-    }
-
-    await determineUserRole();
-    await loadContractStatus();
-    await showRelevantSections();
-  } catch (error) {
-    showMessage("Error: " + error.message, "error");
-  }
 }
 
 setInterval(() => {
